@@ -1,12 +1,18 @@
+
 import java.util.HashMap;
+
 import java.util.*;
+
 import java.lang.*;
+
 public class Cipher{
+
 	String keyword;
 	Character [][] matrix=new Character[5][5];
 	char[] keywordChar;
 	ArrayList<Character> charList;
 	Map<Character, Integer> map = new HashMap<>();
+	
 	public Cipher(String keyword){
 		this.keyword=keyword;
 		charList=new ArrayList<Character>();
@@ -35,6 +41,7 @@ public class Cipher{
             }
 		}
 	}
+
 	public String[][] Generate(){
 		KeywordCheck();
 		int keywordCounter=0;
@@ -67,12 +74,15 @@ public class Cipher{
             		pointerI++;
             	}
             	// if(pointerI>4){
+
             	// 	break;
+
             	// }
             }
         }
 		return null;
 	}
+
 	public String textCheck(String text){
 		char[] textArray=text.toCharArray();
 		int length=text.toCharArray().length;
@@ -85,25 +95,23 @@ public class Cipher{
 				else{
 					charList.add(textArray[i]);
 				}
-				
 			}
 			else{
 				charList.add(textArray[i]);
 			}
 		}
-
 		if(charList.size()%2==1){
 			charList.add('x');
 		}
+		StringBuilder sb= new StringBuilder();
 		for(char c:charList){
-			System.out.println(c);
+			sb.append(c);
 		}
-		return null;
-
+		return sb.toString();
 	}
 
+	public String Algorithm(char f,char s){
 
-	public String Algortihm(char f,char s){
 		int placeFx=0;
 		int placeFy=0;
 		int placeSx=0;
@@ -120,10 +128,6 @@ public class Cipher{
 				}
 			}
 		}
-		System.out.println(placeFx);
-		System.out.println(placeFy);
-		System.out.println(placeSx);
-		System.out.println(placeSy);
 		if(placeFx==placeSx){
 			String temp;
 			temp=Character.toString(matrix[placeFx][(placeFy+1)%5])+Character.toString(matrix[placeSx][(placeSy+1)%5]);
@@ -132,12 +136,14 @@ public class Cipher{
 		else if(placeFy==placeSy){
 			String temp;
 			temp=Character.toString(matrix[(placeFx+1)%5][placeFy])+Character.toString(matrix[(placeSx+1)%5][placeSy]);
-			return temp;		}
+			return temp;		
+			}
 		else{
-			return null;
+			String temp;
+			temp=Character.toString(matrix[placeFx][placeSy])+Character.toString(matrix[placeSx][placeFy]);
+			return temp;
 		}
 	}
-
 	public String toString(){
 		for(int i=0;i<matrix.length;i++){
 			for(int j=0;j<matrix[0].length;j++){
@@ -147,14 +153,69 @@ public class Cipher{
 		}
 		return null;
 	}
-
+	public String encrypt(String input){
+		input=textCheck(input);
+		System.out.println(input);
+		char[] slice=input.toCharArray();
+		int counter=0;
+		String temp="";
+		while(counter<slice.length){
+			temp=temp+ Algorithm(slice[counter],slice[counter+1]);
+			counter+=2;
+		}
+		System.out.println(temp);
+		return temp;
+	}
+	public String decipher(char f,char s){
+		int placeFx=0;
+		int placeFy=0;
+		int placeSx=0;
+		int placeSy=0;
+		for(int i=0;i<matrix.length;i++){
+			for(int j=0; j<matrix[0].length;j++){
+				if(matrix[i][j]==f){
+					placeFx=i;
+					placeFy=j;
+				}
+				if(matrix[i][j]==s){
+					placeSx=i;
+					placeSy=j;
+				}
+			}
+		}
+		if(placeFx==placeSx){
+			String temp;
+			temp=Character.toString(matrix[placeFx][(placeFy-1)%5])+Character.toString(matrix[placeSx][(placeSy-11)%5]);
+			return temp;
+		}
+		else if(placeFy==placeSy){
+			String temp;
+			temp=Character.toString(matrix[(placeFx-1)%5][placeFy])+Character.toString(matrix[(placeSx-1)%5][placeSy]);
+			return temp;		
+			}
+		else{
+			String temp;
+			temp=Character.toString(matrix[placeFx][placeSy])+Character.toString(matrix[placeSx][placeFy]);
+			return temp;
+		}
+	}
+	public String decrypt(String input){
+		char[] slice=input.toCharArray();
+		int counter=0;
+		String temp="";
+		while(counter<slice.length){
+			temp=temp+ decipher(slice[counter],slice[counter+1]);
+			counter+=2;
+		}
+		System.out.println(temp);
+		return temp;
+	}
 	public static void main(String[] args) {
 		Cipher test=new Cipher("keyword");
 		test.Generate();
 		test.toString();
-		System.out.println(test.Algortihm('s','z'));
-		//System.out.println('c'+'h');
-		test.textCheck("helllop");
-		//test.sameColumn();
+		test.encrypt("whattheheck");
+		test.decrypt("yirvzugygyro");
+
 	}
 }
